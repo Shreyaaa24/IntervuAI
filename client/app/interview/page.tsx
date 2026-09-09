@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import {
@@ -18,7 +18,7 @@ import {
 
 const TOTAL_QUESTIONS = 3;
 
-const InterviewPage = () => {
+const InterviewContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -49,9 +49,12 @@ const InterviewPage = () => {
       try {
         setLoading(true);
 
-        const response = await axiosInstance.post("/api/interviews/start", {
-          domain,
-        });
+        const response = await axiosInstance.post(
+          "/api/interviews/start",
+          {
+            domain,
+          }
+        );
 
         setSessionId(response.data.sessionId);
         setQuestion(response.data.question);
@@ -60,7 +63,7 @@ const InterviewPage = () => {
 
         alert(
           error?.response?.data?.message ||
-            "Failed to start interview. Please try again.",
+            "Failed to start interview. Please try again."
         );
 
         router.push("/dashboard");
@@ -123,7 +126,7 @@ const InterviewPage = () => {
           answer: answer.trim(),
           domain,
           questionsAnswered: questionNumber - 1,
-        },
+        }
       );
 
       setFeedback(response.data.feedback || "");
@@ -151,7 +154,7 @@ const InterviewPage = () => {
 
       alert(
         error?.response?.data?.message ||
-          "Failed to submit your answer. Please try again.",
+          "Failed to submit your answer. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -164,7 +167,7 @@ const InterviewPage = () => {
 
   const handleEndInterview = () => {
     const confirmed = window.confirm(
-      "Are you sure you want to end this interview? Your current progress may not be saved.",
+      "Are you sure you want to end this interview? Your current progress may not be saved."
     );
 
     if (confirmed) {
@@ -487,6 +490,29 @@ const InterviewPage = () => {
         </div>
       </div>
     </main>
+  );
+};
+
+// ─────────────────────────────────────────────
+// PAGE WITH SUSPENSE
+// ─────────────────────────────────────────────
+
+const InterviewPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-indigo-50">
+          <div className="text-center">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-violet-600" />
+            <p className="mt-3 text-sm text-gray-500">
+              Loading interview...
+            </p>
+          </div>
+        </main>
+      }
+    >
+      <InterviewContent />
+    </Suspense>
   );
 };
 
