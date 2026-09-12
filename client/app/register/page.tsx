@@ -7,6 +7,7 @@ import axios from "axios";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import axiosInstance from "@/lib/axios";
 
 const Page = () => {
   const router = useRouter();
@@ -36,8 +37,8 @@ const Page = () => {
     setSuccess("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+      const response = await axiosInstance.post(
+        "/api/auth/register",
         formData,
         {
           headers: {
