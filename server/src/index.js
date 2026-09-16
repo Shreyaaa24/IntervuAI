@@ -15,7 +15,9 @@ const app = express();
 // CORS
 app.use(
   CORS({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000",
+       "https://client-theta-flame-21.vercel.app","https://client-lyphbgnyc-shreyaaa24s-projects.vercel.app",],
+       
     credentials: true,
   })
 );
